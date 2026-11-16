@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>お見積もり内容の確認 | SŌRIN Relocation</title>
+<style>
+:root{color-scheme:light;--navy:#16343a;--teal:#168b8b;--gold:#d4af37;--line:#dce6e6}*{box-sizing:border-box}body{margin:0;background:#f4f7f7;color:#26383b;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}.wrap{max-width:680px;margin:0 auto;padding:24px 15px 48px}.brand{text-align:center;color:var(--navy);font-weight:800;letter-spacing:.08em;font-size:20px;margin:8px 0 22px}.brand span{color:var(--gold)}h1{font-size:21px;margin:0 0 8px;color:var(--navy)}.intro{font-size:14px;line-height:1.8;color:#526568;margin:0 0 20px}.section{background:#fff;border:1px solid var(--line);border-radius:13px;margin:12px 0;overflow:hidden}.section h2{font-size:15px;margin:0;padding:13px 15px;background:#edf5f5;color:var(--navy)}.row{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:12px 15px;border-top:1px solid #edf1f1;font-size:14px;line-height:1.65;overflow-wrap:anywhere}.row:first-of-type{border-top:0}.label{color:#657679;font-weight:700}.value{white-space:pre-wrap}.status{text-align:center;padding:34px 12px;color:#637477}.footer{text-align:center;color:#879496;font-size:11px;margin-top:25px}
+</style></head><body><main class="wrap"><div class="brand">SŌRIN <span>Relocation</span></div><h1>お見積もり内容の確認</h1><p class="intro">お送りしたお見積もり・ご相談内容をご確認いただけます。ご希望日時は確定ではありません。内容確認後、担当者より改めてご連絡いたします。</p><div id="content" class="status">内容を読み込んでいます…</div><div class="footer">SŌRIN Relocation</div></main>
+<script>
+(async()=>{const root=document.getElementById('content');function getTokenFromLiffUrl(){
+  const params=new URLSearchParams(location.search);
+  let token=params.get('t')||'';
+  if(token)return token;
+  // LIFFはEndpoint URLへ遷移する際、元URLのクエリをliff.stateへ格納する場合がある。
+  const state=params.get('liff.state')||params.get('liffState')||'';
+  if(state){
+    try{
+      const stateUrl=new URL(state,location.origin);
+      token=stateUrl.searchParams.get('t')||'';
+      if(token)return token;
+    }catch(_){
+      const nested=new URLSearchParams(state.replace(/^\?/,'').replace(/^\//,''));
+      token=nested.get('t')||'';
+      if(token)return token;
+    }
+  }
+  // LIFFの状態がhash側に渡されたケースも許容する。
+  const hash=location.hash||'';
+  const hashQuery=hash.includes('?')?hash.slice(hash.indexOf('?')+1):hash.replace(/^#/,'');
+  return new URLSearchParams(hashQuery).get('t')||'';
+}
+
+const token=getTokenFromLiffUrl();if(!/^[0-9a-f-]{36}$/i.test(token)){root.textContent='確認ページのURLが正しくありません。LINEに届いたリンクから開き直してください。';return;}try{const r=await fetch('https://raelrzegewoftknalsws.supabase.co/functions/v1/line-estimate-notify?t='+encodeURIComponent(token),{headers:{'apikey':'sb_publishable_2Hzm21bczQC7uhCtrGHn1Q_8OhA_K9o'}});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||'内容を確認できませんでした。');const s=d.snapshot||{};root.className='';root.replaceChildren();for(const sec of (s.sections||[])){const box=document.createElement('section');box.className='section';const h=document.createElement('h2');h.textContent=sec.title||'';box.append(h);for(const item of (sec.rows||[])){if(!item.value)continue;const row=document.createElement('div');row.className='row';const label=document.createElement('div');label.className='label';label.textContent=item.label||'';const value=document.createElement('div');value.className='value';value.textContent=item.value;row.append(label,value);box.append(row);}root.append(box);}if(!root.children.length)root.textContent='表示できる内容がありません。SŌRINまでお問い合わせください。';}catch(e){root.textContent=e.message||'内容を読み込めませんでした。時間をおいて再度お試しください。';}})();
+</script></body></html>
